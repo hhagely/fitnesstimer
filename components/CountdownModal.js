@@ -26,12 +26,12 @@ class CountdownModal extends Component {
 							this.state.countdownTimeLeft > 0
 						) {
 							console.log('playing ping');
-							Audio.Sound.create(require('../../assets/sounds/Ping.mp3'), {
+							Audio.Sound.create(require('../assets/sounds/Ping.mp3'), {
 								shouldPlay: true
 							});
 						} else if (this.state.countdownTimeLeft === 0) {
 							console.log('playing popcorn');
-							Audio.Sound.create(require('../../assets/sounds/Popcorn.mp3'), {
+							Audio.Sound.create(require('../assets/sounds/Popcorn.mp3'), {
 								shouldPlay: true
 							});
 						}

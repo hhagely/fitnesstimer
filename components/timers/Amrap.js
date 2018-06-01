@@ -100,11 +100,17 @@ class AmrapTimer extends Component {
 		const { timeElapsed, isRunning, timerSettings } = this.props;
 		return (
 			<View>
-				<CountdownModal 
+				<CountdownModal
 					timerSettings={timerSettings}
-					startTimerCallback={}
-					/>
-				{this.props.render(this.state)}
+					// startTimerCallback={}
+				/>
+				<TimeElapsed
+					id="timer"
+					timeElapsed={timeElapsed}
+					isRunning={isRunning}
+					timerSettings={timerSettings}
+				/>
+				{/* {this.props.render(this.state)} */}
 				<View
 					style={{
 						flexDirection: 'row',

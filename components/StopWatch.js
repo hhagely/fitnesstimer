@@ -16,7 +16,7 @@ class StopWatch extends Component {
 		// ['update', 'reset', 'toggle', 'cancelCountdown'].forEach((method) => {
 		// 	this[method] = this[method].bind(this);
 		// });
-		this.cancelCountdown = this.cancelCountdown.bind(this);
+		// this.cancelCountdown = this.cancelCountdown.bind(this);
 		this.toggleModal = this.toggleModal.bind(this);
 
 		this.state = this.initialState = {
@@ -180,18 +180,11 @@ class StopWatch extends Component {
 		const { timerSettings } = this.props;
 		const { isRunning, timeElapsed } = this.state;
 
+		// TODO: should not be passing identical props into 2 separate components like below. Separate it out.
 		switch (timerSettings.timerType) {
 			case 'AMRAP':
 				return (
 					<AmrapTimer
-						render={(timer) => (
-							<TimeElapsed
-								id="timer"
-								timeElapsed={timeElapsed}
-								isRunning={isRunning}
-								timerSettings={timerSettings}
-							/>
-						)}
 						timeElapsed={timeElapsed}
 						isRunning={isRunning}
 						timerSettings={timerSettings}
