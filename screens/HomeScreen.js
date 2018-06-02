@@ -14,19 +14,35 @@ import { WebBrowser } from 'expo';
 
 import { MonoText } from '../components/StyledText';
 import StopWatch from '../components/StopWatch';
+import AmrapTimer from '../components/timers/Amrap';
 
 export default class HomeScreen extends React.Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {};
+		// this.toggleModal = this.toggleModal.bind(this);
+
+		this.state = this.initialState = {
+			isRunning: false,
+			timeElapsed: 0,
+			countdownTimeLeft: 0,
+			startTime: 0,
+			// showModal: false,
+			timerSettings: {
+				timerType: 'AMRAP',
+				timerDuration: 10,
+				countdown: true,
+				countdownDuration: 10
+			}
+		};
 	}
 
 	static navigationOptions = {
 		header: null
 	};
 
-	render() {
+	componentWillUpdate() {
+		console.log('calling componentwillmount');
 		const timerSettings = this.props.navigation.getParam('timerSettings', {
 			timerType: 'AMRAP',
 			timerDuration: 10,
@@ -34,10 +50,59 @@ export default class HomeScreen extends React.Component {
 			countdownDuration: 10
 		});
 
+		this.setState({ timerSettings });
+	}
+
+	renderTimer() {
+		const { isRunning, timeElapsed, timerSettings } = this.state;
+
+		// TODO: should not be passing identical props into 2 separate components like below. Separate it out.
+		switch (timerSettings.timerType) {
+			case 'AMRAP':
+				return (
+					<AmrapTimer
+						// timeElapsed={timeElapsed}
+						// isRunning={isRunning}
+						timerSettings={timerSettings}
+						// timerSettings={timerSettings}
+						// timeElapsed={this.state.timeElapsed}
+						// isRunning={this.state.isRunning}
+						// update={this.updateAmrap}
+						// startTimer={this.startTimer}
+						// stopTimer={this.stopTimer}
+						// resetTimer={this.reset}
+					/>
+				);
+				break;
+			case 'Emom':
+				return (
+					<EmomTimer
+						render={(timer) => (
+							<TimeElapsed
+								timeElapsed={timeElapsed}
+								isRunning={isRunning}
+								timerSettings={timerSettings}
+							/>
+						)}
+					/>
+				);
+				break;
+			// case 'Tabata':
+			// 	return <TabataTimer duration={timerSettings.timerDuration} />;
+			// 	break;
+			// case 'ReverseTabata':
+			// 	return <ReverseTabataTimer duation={timerSettings.timerDuration} />;
+			// 	break;
+		}
+	}
+
+	render() {
 		return (
 			<View style={styles.container}>
 				<ScrollView contentContainerStyle={styles.contentContainer}>
-					<StopWatch timerSettings={timerSettings} />
+					<View style={styles.timerContainer}>{this.renderTimer()}</View>
+
+					{/* <StopWatch timerSettings={timerSettings} /> */}
 				</ScrollView>
 			</View>
 		);
@@ -84,6 +149,12 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: '#fff'
 	},
+	timerContainer: {
+		flex: 1,
+		// flexDirection: 'column',
+		backgroundColor: '#fff',
+		justifyContent: 'space-between'
+	},
 	developmentModeText: {
 		marginBottom: 20,
 		color: 'rgba(0,0,0,0.4)',
@@ -94,79 +165,79 @@ const styles = StyleSheet.create({
 	contentContainer: {
 		flex: 1,
 		paddingTop: 30
-	},
-	welcomeContainer: {
-		alignItems: 'center',
-		marginTop: 10,
-		marginBottom: 20
-	},
-	welcomeImage: {
-		width: 100,
-		height: 80,
-		resizeMode: 'contain',
-		marginTop: 3,
-		marginLeft: -10
-	},
-	getStartedContainer: {
-		alignItems: 'center',
-		marginHorizontal: 50
-	},
-	homeScreenFilename: {
-		marginVertical: 7
-	},
-	codeHighlightText: {
-		color: 'rgba(96,100,109, 0.8)'
-	},
-	codeHighlightContainer: {
-		backgroundColor: 'rgba(0,0,0,0.05)',
-		borderRadius: 3,
-		paddingHorizontal: 4
-	},
-	getStartedText: {
-		fontSize: 17,
-		color: 'rgba(96,100,109, 1)',
-		lineHeight: 24,
-		textAlign: 'center'
-	},
-	tabBarInfoContainer: {
-		position: 'absolute',
-		bottom: 0,
-		left: 0,
-		right: 0,
-		...Platform.select({
-			ios: {
-				shadowColor: 'black',
-				shadowOffset: {
-					height: -3
-				},
-				shadowOpacity: 0.1,
-				shadowRadius: 3
-			},
-			android: {
-				elevation: 20
-			}
-		}),
-		alignItems: 'center',
-		backgroundColor: '#fbfbfb',
-		paddingVertical: 20
-	},
-	tabBarInfoText: {
-		fontSize: 17,
-		color: 'rgba(96,100,109, 1)',
-		textAlign: 'center'
-	},
-	navigationFilename: {
-		marginTop: 5
-	},
-	helpContainer: {
-		marginTop: 15,
-		alignItems: 'center'
-	},
-	helpLink: {
-		paddingVertical: 15
-	},
-	helpLinkText: {
-		fontSize: 14,
-		color: '#2e78b7'
 	}
+	// welcomeContainer: {
+	// 	alignItems: 'center',
+	// 	marginTop: 10,
+	// 	marginBottom: 20
+	// },
+	// welcomeImage: {
+	// 	width: 100,
+	// 	height: 80,
+	// 	resizeMode: 'contain',
+	// 	marginTop: 3,
+	// 	marginLeft: -10
+	// },
+	// getStartedContainer: {
+	// 	alignItems: 'center',
+	// 	marginHorizontal: 50
+	// },
+	// homeScreenFilename: {
+	// 	marginVertical: 7
+	// },
+	// codeHighlightText: {
+	// 	color: 'rgba(96,100,109, 0.8)'
+	// },
+	// codeHighlightContainer: {
+	// 	backgroundColor: 'rgba(0,0,0,0.05)',
+	// 	borderRadius: 3,
+	// 	paddingHorizontal: 4
+	// },
+	// getStartedText: {
+	// 	fontSize: 17,
+	// 	color: 'rgba(96,100,109, 1)',
+	// 	lineHeight: 24,
+	// 	textAlign: 'center'
+	// },
+	// tabBarInfoContainer: {
+	// 	position: 'absolute',
+	// 	bottom: 0,
+	// 	left: 0,
+	// 	right: 0,
+	// 	...Platform.select({
+	// 		ios: {
+	// 			shadowColor: 'black',
+	// 			shadowOffset: {
+	// 				height: -3
+	// 			},
+	// 			shadowOpacity: 0.1,
+	// 			shadowRadius: 3
+	// 		},
+	// 		android: {
+	// 			elevation: 20
+	// 		}
+	// 	}),
+	// 	alignItems: 'center',
+	// 	backgroundColor: '#fbfbfb',
+	// 	paddingVertical: 20
+	// },
+	// tabBarInfoText: {
+	// 	fontSize: 17,
+	// 	color: 'rgba(96,100,109, 1)',
+	// 	textAlign: 'center'
+	// },
+	// navigationFilename: {
+	// 	marginTop: 5
+	// },
+	// helpContainer: {
+	// 	marginTop: 15,
+	// 	alignItems: 'center'
+	// },
+	// helpLink: {
+	// 	paddingVertical: 15
+	// },
+	// helpLinkText: {
+	// 	fontSize: 14,
+	// 	color: '#2e78b7'
+	// }
 });

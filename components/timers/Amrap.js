@@ -8,15 +8,22 @@ import CountdownModal from '../CountdownModal';
 class AmrapTimer extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			showModal: false,
+			isRunning: false,
+			timeElapsed: 0
+		};
 
-		['update', 'reset', 'toggle'].forEach((method) => {
+		['update', 'reset', 'toggle', 'cancelCountdown'].forEach((method) => {
 			this[method] = this[method].bind(this);
 		});
 	}
 
+	toggleModal() {
+		this.setState({ showModal: !this.state.showModal });
+	}
+
 	toggle() {
-		console.log(`toggle was clicked`);
 		this.setState(
 			{
 				isRunning: !this.state.isRunning
@@ -24,18 +31,17 @@ class AmrapTimer extends Component {
 			() => {
 				const { timerSettings } = this.props;
 				if (timerSettings.countdown && this.state.isRunning) {
-					// this.setState({ showModal: true });
-					this.props.toggleModal();
+					this.toggleModal();
 					this.startCountdown();
 
 					this.countdownTimerTimeout = setTimeout(() => {
 						this.startTimer();
-						// this.setState({ showModal: false });
-						this.props.toggleModal();
+						this.toggleModal();
 						clearInterval(this.countdownTimer);
 						// add 1 second to the countdown duration so the countdown actually goes to zero
 					}, timerSettings.countdownDuration * 1000 + 1000);
 				} else {
+					console.log(`isrunning: ${this.state.isRunning}`);
 					this.state.isRunning ? this.startTimer() : clearInterval(this.timer);
 				}
 			}
@@ -65,44 +71,58 @@ class AmrapTimer extends Component {
 		});
 	}
 
-	// startCountdown() {
-	// 	const { countdownDuration } = this.props.timerSettings;
+	startCountdown() {
+		const { countdownDuration } = this.props.timerSettings;
 
-	// 	this.setState({ countdownTimeLeft: countdownDuration });
+		this.setState({ countdownTimeLeft: countdownDuration });
 
-	// 	this.countdownTimer = setInterval(
-	// 		() =>
-	// 			this.setState(
-	// 				{ countdownTimeLeft: this.state.countdownTimeLeft - 1 },
-	// 				() => {
-	// 					console.log(`countdowntime left: ${this.state.countdownTimeLeft}`);
-	// 					if (
-	// 						this.state.countdownTimeLeft <= 3 &&
-	// 						this.state.countdownTimeLeft > 0
-	// 					) {
-	// 						console.log('playing ping');
-	// 						Audio.Sound.create(require('../../assets/sounds/Ping.mp3'), {
-	// 							shouldPlay: true
-	// 						});
-	// 					} else if (this.state.countdownTimeLeft === 0) {
-	// 						console.log('playing popcorn');
-	// 						Audio.Sound.create(require('../../assets/sounds/Popcorn.mp3'), {
-	// 							shouldPlay: true
-	// 						});
-	// 					}
-	// 				}
-	// 			),
-	// 		1000
-	// 	);
-	// }
+		this.countdownTimer = setInterval(
+			() =>
+				this.setState(
+					{ countdownTimeLeft: this.state.countdownTimeLeft - 1 },
+					() => {
+						console.log(`countdowntime left: ${this.state.countdownTimeLeft}`);
+						if (
+							this.state.countdownTimeLeft <= 3 &&
+							this.state.countdownTimeLeft > 0
+						) {
+							console.log('playing ping');
+							Audio.Sound.create(require('../../assets/sounds/Ping.mp3'), {
+								shouldPlay: true
+							});
+						} else if (this.state.countdownTimeLeft === 0) {
+							console.log('playing popcorn');
+							Audio.Sound.create(require('../../assets/sounds/Popcorn.mp3'), {
+								shouldPlay: true
+							});
+						}
+					}
+				),
+			1000
+		);
+	}
+
+	cancelCountdown() {
+		clearTimeout(this.countdownTimerTimeout);
+		clearInterval(this.countdownTimer);
+
+		this.setState({
+			countdownTimeLeft: this.props.timerSettings.countdownDuration,
+			isRunning: false,
+			showModal: false
+		});
+	}
 
 	render() {
-		const { timeElapsed, isRunning, timerSettings } = this.props;
+		const { timerSettings } = this.props;
+		const { timeElapsed, isRunning } = this.state;
+
 		return (
 			<View>
 				<CountdownModal
-					timerSettings={timerSettings}
-					// startTimerCallback={}
+					showModal={this.state.showModal}
+					countdownTimeLeft={this.state.countdownTimeLeft}
+					cancelCountdown={this.cancelCountdown}
 				/>
 				<TimeElapsed
 					id="timer"
@@ -110,7 +130,6 @@ class AmrapTimer extends Component {
 					isRunning={isRunning}
 					timerSettings={timerSettings}
 				/>
-				{/* {this.props.render(this.state)} */}
 				<View
 					style={{
 						flexDirection: 'row',
@@ -134,14 +153,6 @@ class AmrapTimer extends Component {
 					</View>
 				</View>
 			</View>
-			// <View>
-			// 	<TimeElapsed
-			// 		id="timer"
-			// 		timeElapsed={timeElapsed}
-			// 		isRunning={isRunning}
-			// 		timerDuration={timerSettings.timerDuration}
-			// 	/>
-			// </View>
 		);
 	}
 }

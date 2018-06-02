@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, View, Text, StyleSheet } from 'react-native';
+import { Modal, View, Text, StyleSheet, Button } from 'react-native';
 import { Audio } from 'expo';
 
 class CountdownModal extends Component {
@@ -10,46 +10,15 @@ class CountdownModal extends Component {
 		};
 	}
 
-	startCountdown() {
-		const { countdownDuration } = this.props.timerSettings;
-
-		this.setState({ countdownTimeLeft: countdownDuration });
-
-		this.countdownTimer = setInterval(
-			() =>
-				this.setState(
-					{ countdownTimeLeft: this.state.countdownTimeLeft - 1 },
-					() => {
-						console.log(`countdowntime left: ${this.state.countdownTimeLeft}`);
-						if (
-							this.state.countdownTimeLeft <= 3 &&
-							this.state.countdownTimeLeft > 0
-						) {
-							console.log('playing ping');
-							Audio.Sound.create(require('../assets/sounds/Ping.mp3'), {
-								shouldPlay: true
-							});
-						} else if (this.state.countdownTimeLeft === 0) {
-							console.log('playing popcorn');
-							Audio.Sound.create(require('../assets/sounds/Popcorn.mp3'), {
-								shouldPlay: true
-							});
-						}
-					}
-				),
-			1000
-		);
-	}
-
 	renderModal() {
-		if (this.state.countdownTimeLeft !== 0) {
+		if (this.props.countdownTimeLeft !== 0) {
 			return (
 				<View
 					style={[
 						styles.container,
 						{ alignItems: 'center' },
-						this.state.countdownTimeLeft <= 3 &&
-							this.state.countdownTimeLeft > 0 &&
+						this.props.countdownTimeLeft <= 3 &&
+							this.props.countdownTimeLeft > 0 &&
 							styles.countdownBackgroundAlt
 					]}
 				>
@@ -57,10 +26,10 @@ class CountdownModal extends Component {
 						<Text style={{ fontSize: 32 }}>Your workout will begin in:</Text>
 					</View>
 					<View>
-						<Text style={{ fontSize: 72 }}>{this.state.countdownTimeLeft}</Text>
+						<Text style={{ fontSize: 72 }}>{this.props.countdownTimeLeft}</Text>
 					</View>
 					<View style={styles.buttonContainer}>
-						<Button onPress={this.cancelCountdown} title="Cancel" />
+						<Button onPress={this.props.cancelCountdown} title="Cancel" />
 					</View>
 				</View>
 			);
@@ -81,24 +50,14 @@ class CountdownModal extends Component {
 		}
 	}
 
-	cancelCountdown() {
-		clearTimeout(this.countdownTimerTimeout);
-		clearInterval(this.countdownTimer);
-		this.setState({
-			countdownTimeLeft: this.props.timerSettings.countdownDuration,
-			isRunning: false,
-			showModal: false
-		});
-	}
-
 	render() {
 		return (
 			<View>
 				<Modal
 					transparent={false}
 					animationType="slide"
-					visible={this.state.showModal}
-					onRequestClose={this.cancelCountdown}
+					visible={this.props.showModal}
+					onRequestClose={this.props.cancelCountdown}
 				>
 					{this.renderModal()}
 				</Modal>
