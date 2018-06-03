@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Button, StyleSheet } from 'react-native';
 import { Audio } from 'expo';
+import PropTypes from 'prop-types';
 
 import TimeElapsed from '../TimeElapsed';
 import CountdownModal from '../CountdownModal';
@@ -9,6 +10,13 @@ class AmrapTimer extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			showModal: false,
+			isRunning: false,
+			timeElapsed: 0
+		};
+
+		this.initialState = {
+			timerSettings: this.props.timerSettings,
 			showModal: false,
 			isRunning: false,
 			timeElapsed: 0
@@ -30,7 +38,8 @@ class AmrapTimer extends Component {
 			},
 			() => {
 				const { timerSettings } = this.props;
-				if (timerSettings.countdown && this.state.isRunning) {
+				const { isRunning, timeElapsed } = this.state;
+				if (timerSettings.countdown && isRunning && timeElapsed === 0) {
 					this.toggleModal();
 					this.startCountdown();
 
@@ -41,8 +50,9 @@ class AmrapTimer extends Component {
 						// add 1 second to the countdown duration so the countdown actually goes to zero
 					}, timerSettings.countdownDuration * 1000 + 1000);
 				} else {
-					console.log(`isrunning: ${this.state.isRunning}`);
-					this.state.isRunning ? this.startTimer() : clearInterval(this.timer);
+					isRunning && timeElapsed > 0
+						? this.startTimer()
+						: clearInterval(this.timer);
 				}
 			}
 		);
@@ -55,8 +65,6 @@ class AmrapTimer extends Component {
 
 	startTimer() {
 		this.setState({ startTime: Date.now() });
-
-		const { timerSettings } = this.props;
 
 		this.timer = setInterval(this.update, 1000);
 	}
@@ -81,17 +89,14 @@ class AmrapTimer extends Component {
 				this.setState(
 					{ countdownTimeLeft: this.state.countdownTimeLeft - 1 },
 					() => {
-						console.log(`countdowntime left: ${this.state.countdownTimeLeft}`);
 						if (
 							this.state.countdownTimeLeft <= 3 &&
 							this.state.countdownTimeLeft > 0
 						) {
-							console.log('playing ping');
 							Audio.Sound.create(require('../../assets/sounds/Ping.mp3'), {
 								shouldPlay: true
 							});
 						} else if (this.state.countdownTimeLeft === 0) {
-							console.log('playing popcorn');
 							Audio.Sound.create(require('../../assets/sounds/Popcorn.mp3'), {
 								shouldPlay: true
 							});

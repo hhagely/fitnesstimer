@@ -13,21 +13,17 @@ import {
 import { WebBrowser } from 'expo';
 
 import { MonoText } from '../components/StyledText';
-import StopWatch from '../components/StopWatch';
 import AmrapTimer from '../components/timers/Amrap';
 
 export default class HomeScreen extends React.Component {
 	constructor(props) {
 		super(props);
 
-		// this.toggleModal = this.toggleModal.bind(this);
-
 		this.state = this.initialState = {
 			isRunning: false,
 			timeElapsed: 0,
 			countdownTimeLeft: 0,
 			startTime: 0,
-			// showModal: false,
 			timerSettings: {
 				timerType: 'AMRAP',
 				timerDuration: 10,
@@ -42,7 +38,6 @@ export default class HomeScreen extends React.Component {
 	};
 
 	componentWillUpdate() {
-		console.log('calling componentwillmount');
 		const timerSettings = this.props.navigation.getParam('timerSettings', {
 			timerType: 'AMRAP',
 			timerDuration: 10,
@@ -59,20 +54,7 @@ export default class HomeScreen extends React.Component {
 		// TODO: should not be passing identical props into 2 separate components like below. Separate it out.
 		switch (timerSettings.timerType) {
 			case 'AMRAP':
-				return (
-					<AmrapTimer
-						// timeElapsed={timeElapsed}
-						// isRunning={isRunning}
-						timerSettings={timerSettings}
-						// timerSettings={timerSettings}
-						// timeElapsed={this.state.timeElapsed}
-						// isRunning={this.state.isRunning}
-						// update={this.updateAmrap}
-						// startTimer={this.startTimer}
-						// stopTimer={this.stopTimer}
-						// resetTimer={this.reset}
-					/>
-				);
+				return <AmrapTimer timerSettings={timerSettings} />;
 				break;
 			case 'Emom':
 				return (
@@ -101,8 +83,6 @@ export default class HomeScreen extends React.Component {
 			<View style={styles.container}>
 				<ScrollView contentContainerStyle={styles.contentContainer}>
 					<View style={styles.timerContainer}>{this.renderTimer()}</View>
-
-					{/* <StopWatch timerSettings={timerSettings} /> */}
 				</ScrollView>
 			</View>
 		);
@@ -151,7 +131,6 @@ const styles = StyleSheet.create({
 	},
 	timerContainer: {
 		flex: 1,
-		// flexDirection: 'column',
 		backgroundColor: '#fff',
 		justifyContent: 'space-between'
 	},
@@ -166,78 +145,4 @@ const styles = StyleSheet.create({
 		flex: 1,
 		paddingTop: 30
 	}
-	// welcomeContainer: {
-	// 	alignItems: 'center',
-	// 	marginTop: 10,
-	// 	marginBottom: 20
-	// },
-	// welcomeImage: {
-	// 	width: 100,
-	// 	height: 80,
-	// 	resizeMode: 'contain',
-	// 	marginTop: 3,
-	// 	marginLeft: -10
-	// },
-	// getStartedContainer: {
-	// 	alignItems: 'center',
-	// 	marginHorizontal: 50
-	// },
-	// homeScreenFilename: {
-	// 	marginVertical: 7
-	// },
-	// codeHighlightText: {
-	// 	color: 'rgba(96,100,109, 0.8)'
-	// },
-	// codeHighlightContainer: {
-	// 	backgroundColor: 'rgba(0,0,0,0.05)',
-	// 	borderRadius: 3,
-	// 	paddingHorizontal: 4
-	// },
-	// getStartedText: {
-	// 	fontSize: 17,
-	// 	color: 'rgba(96,100,109, 1)',
-	// 	lineHeight: 24,
-	// 	textAlign: 'center'
-	// },
-	// tabBarInfoContainer: {
-	// 	position: 'absolute',
-	// 	bottom: 0,
-	// 	left: 0,
-	// 	right: 0,
-	// 	...Platform.select({
-	// 		ios: {
-	// 			shadowColor: 'black',
-	// 			shadowOffset: {
-	// 				height: -3
-	// 			},
-	// 			shadowOpacity: 0.1,
-	// 			shadowRadius: 3
-	// 		},
-	// 		android: {
-	// 			elevation: 20
-	// 		}
-	// 	}),
-	// 	alignItems: 'center',
-	// 	backgroundColor: '#fbfbfb',
-	// 	paddingVertical: 20
-	// },
-	// tabBarInfoText: {
-	// 	fontSize: 17,
-	// 	color: 'rgba(96,100,109, 1)',
-	// 	textAlign: 'center'
-	// },
-	// navigationFilename: {
-	// 	marginTop: 5
-	// },
-	// helpContainer: {
-	// 	marginTop: 15,
-	// 	alignItems: 'center'
-	// },
-	// helpLink: {
-	// 	paddingVertical: 15
-	// },
-	// helpLinkText: {
-	// 	fontSize: 14,
-	// 	color: '#2e78b7'
-	// }
 });
