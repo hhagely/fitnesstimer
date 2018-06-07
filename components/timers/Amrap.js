@@ -130,7 +130,6 @@ class AmrapTimer extends Component {
 					cancelCountdown={this.cancelCountdown}
 				/>
 				<TimeElapsed
-					id="timer"
 					timeElapsed={timeElapsed}
 					isRunning={isRunning}
 					timerSettings={timerSettings}
