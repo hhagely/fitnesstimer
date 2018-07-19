@@ -10,6 +10,9 @@ import {
 	Button,
 	AsyncStorage
 } from 'react-native';
+import { connect } from 'react-redux';
+
+import { saveTimerSettings } from '../actions';
 
 class SettingsScreen extends Component {
 	static navigationOptions = {
@@ -102,9 +105,12 @@ class SettingsScreen extends Component {
 			timerSettings.emomStyle = this.state.emomStyle;
 		}
 
-		this.props.navigation.navigate('Home', {
-			timerSettings
-		});
+		this.props.saveTimerSettings(timerSettings);
+
+		this.props.navigation.navigate('Home');
+		// this.props.navigation.navigate('Home', {
+		// 	timerSettings
+		// });
 	}
 
 	render() {
@@ -176,4 +182,11 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default SettingsScreen;
+const mapStateToProps = (state) => {
+	const { timer } = state.timer;
+};
+
+export default connect(
+	null,
+	{ saveTimerSettings }
+)(SettingsScreen);

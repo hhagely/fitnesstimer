@@ -5,17 +5,15 @@ import {
 	ScrollView,
 	StyleSheet,
 	Text,
-	TouchableOpacity,
-	View,
-	Button,
-	AsyncStorage
+	View
 } from 'react-native';
 import { WebBrowser } from 'expo';
+import { connect } from 'react-redux';
 
 import { MonoText } from '../components/StyledText';
 import AmrapTimer from '../components/timers/Amrap';
 
-export default class HomeScreen extends React.Component {
+class HomeScreen extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -24,12 +22,12 @@ export default class HomeScreen extends React.Component {
 			timeElapsed: 0,
 			countdownTimeLeft: 0,
 			startTime: 0,
-			timerSettings: {
-				timerType: 'AMRAP',
-				timerDuration: 10,
-				countdown: true,
-				countdownDuration: 10
-			}
+			// timerSettings: {
+			timerType: 'AMRAP',
+			timerDuration: 10,
+			countdown: true,
+			countdownDuration: 10
+			// }
 		};
 	}
 
@@ -37,24 +35,29 @@ export default class HomeScreen extends React.Component {
 		header: null
 	};
 
-	componentWillUpdate() {
-		const timerSettings = this.props.navigation.getParam('timerSettings', {
-			timerType: 'AMRAP',
-			timerDuration: 10,
-			countdown: true,
-			countdownDuration: 10
-		});
+	// componentWillUpdate() {
+	// 	const timerSettings = this.props.navigation.getParam('timerSettings', {
+	// 		timerType: 'AMRAP',
+	// 		timerDuration: 10,
+	// 		countdown: true,
+	// 		countdownDuration: 10
+	// 	});
 
-		this.setState({ timerSettings });
-	}
+	// 	this.setState({ timerSettings });
+	// }
 
 	renderTimer() {
-		const { isRunning, timeElapsed, timerSettings } = this.state;
+		const { isRunning, timeElapsed } = this.state;
+		const { timer } = this.props;
+
+		if (timer === undefined) return;
+
+		console.log(`timer: ${JSON.stringify(timer)}`);
 
 		// TODO: should not be passing identical props into 2 separate components like below. Separate it out.
-		switch (timerSettings.timerType) {
+		switch (timer.timerType) {
 			case 'AMRAP':
-				return <AmrapTimer timerSettings={timerSettings} />;
+				return <AmrapTimer timerSettings={timer} />;
 				break;
 			case 'Emom':
 				return (
@@ -63,7 +66,7 @@ export default class HomeScreen extends React.Component {
 							<TimeElapsed
 								timeElapsed={timeElapsed}
 								isRunning={isRunning}
-								timerSettings={timerSettings}
+								timerSettings={timer}
 							/>
 						)}
 					/>
@@ -146,3 +149,11 @@ const styles = StyleSheet.create({
 		paddingTop: 30
 	}
 });
+
+const mapStateToProps = (state) => {
+	const { timer } = state;
+
+	return timer;
+};
+
+export default connect(mapStateToProps)(HomeScreen);
