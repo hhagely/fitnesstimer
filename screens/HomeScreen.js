@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import { MonoText } from '../components/StyledText';
 import AmrapTimer from '../components/timers/Amrap';
 
-class HomeScreen extends React.Component {
+export class HomeScreen extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -51,6 +51,15 @@ class HomeScreen extends React.Component {
 		const { timer } = this.props;
 
 		if (timer === undefined) return;
+
+		// if (timer === undefined) {
+		// 	timer = {
+		// 		timerType: 'AMRAP',
+		// 		timerDuration: 10,
+		// 		countdown: true,
+		// 		countdownDuration: 10
+		// 	};
+		// }
 
 		console.log(`timer: ${JSON.stringify(timer)}`);
 
@@ -156,4 +165,8 @@ const mapStateToProps = (state) => {
 	return timer;
 };
 
-export default connect(mapStateToProps)(HomeScreen);
+// export default connect(mapStateToProps)(HomeScreen);
+
+const HomeScreenContainer = connect(mapStateToProps)(HomeScreen);
+
+export default HomeScreenContainer;

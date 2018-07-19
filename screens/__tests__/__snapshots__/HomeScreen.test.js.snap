@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<HomeScreen /> Renders the Homescreen component 1`] = `
+<View
+  style={
+    Object {
+      "backgroundColor": "#fff",
+      "flex": 1,
+    }
+  }
+>
+  <ScrollView
+    contentContainerStyle={
+      Object {
+        "flex": 1,
+        "paddingTop": 30,
+      }
+    }
+  >
+    <View
+      style={
+        Object {
+          "backgroundColor": "#fff",
+          "flex": 1,
+          "justifyContent": "space-between",
+        }
+      }
+    />
+  </ScrollView>
+</View>
+`;

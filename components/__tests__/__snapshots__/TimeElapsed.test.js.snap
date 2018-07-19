@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<TimeElapsed /> renders the component 1`] = `
+<View>
+  <Text
+    accessible={true}
+    allowFontScaling={true}
+    ellipsizeMode="tail"
+    style={
+      Object {
+        "fontSize": 108,
+        "textAlign": "center",
+      }
+    }
+  >
+    NaN
+    :
+    NaN
+  </Text>
+</View>
+`;

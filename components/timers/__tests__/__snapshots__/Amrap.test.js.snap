@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Amrap /> renders the component 1`] = `
+<View>
+  <CountdownModal
+    cancelCountdown={[Function]}
+    showModal={false}
+  />
+  <TimeElapsed
+    isRunning={false}
+    timeElapsed={0}
+  />
+  <View
+    style={
+      Object {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "justifyContent": "space-around",
+      }
+    }
+  >
+    <View
+      style={
+        Object {
+          "width": 125,
+        }
+      }
+    >
+      <Button
+        onPress={[Function]}
+        title="Start"
+      />
+    </View>
+    <View
+      style={
+        Object {
+          "width": 125,
+        }
+      }
+    >
+      <Button
+        disabled={true}
+        onPress={[Function]}
+        title="Reset"
+      />
+    </View>
+  </View>
+</View>
+`;

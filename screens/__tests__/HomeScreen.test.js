@@ -4,13 +4,13 @@ import Adapter from 'enzyme-adapter-react-16';
 import { shallow, configure } from 'enzyme';
 import toJson from 'enzyme-to-json';
 
-import Amrap from '../Amrap';
+import { HomeScreen } from '../HomeScreen';
 
 configure({ adapter: new Adapter() });
 
-describe('<Amrap />', () => {
-	it('renders the component', () => {
-		const tree = shallow(<Amrap />);
+describe('<HomeScreen />', () => {
+	it('Renders the Homescreen component', () => {
+		const tree = shallow(<HomeScreen />);
 		expect(toJson(tree)).toMatchSnapshot();
 	});
 });
