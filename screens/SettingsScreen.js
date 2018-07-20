@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
 
 import { saveTimerSettings } from '../actions';
 
-class SettingsScreen extends Component {
+export class SettingsScreen extends Component {
 	static navigationOptions = {
 		title: 'Timer Settings'
 	};
@@ -113,6 +113,8 @@ class SettingsScreen extends Component {
 		// });
 	}
 
+	componentDidMount() {}
+
 	render() {
 		return (
 			<View style={styles.container}>
@@ -186,7 +188,14 @@ const mapStateToProps = (state) => {
 	const { timer } = state.timer;
 };
 
-export default connect(
+const SettingsScreenContainer = connect(
 	null,
 	{ saveTimerSettings }
 )(SettingsScreen);
+
+export default SettingsScreenContainer;
+
+// export default connect(
+// 	null,
+// 	{ saveTimerSettings }
+// )(SettingsScreen);
