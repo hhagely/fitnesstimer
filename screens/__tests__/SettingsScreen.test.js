@@ -1,20 +1,16 @@
 import { Button, Picker, Switch } from 'react-native';
 import React from 'react';
 import Adapter from 'enzyme-adapter-react-16';
-import { shallow, configure, mount } from 'enzyme';
+import { shallow, configure } from 'enzyme';
 import toJson from 'enzyme-to-json';
-// import configureStore from 'redux-mock-store';
 
 import { SettingsScreen } from '../SettingsScreen';
-// import reducers from '../../reducers';
-
-// const middlewares = [];
-// const mockStore = configureStore(middlewares);
 
 configure({ adapter: new Adapter() });
 
 const initialState = {
-	timerType: 'AMRAP',
+	timerType: 'EMOM',
+	emomStyle: 2,
 	timerDuration: 10,
 	countdown: true,
 	countdownDuration: 10
@@ -31,10 +27,6 @@ let wrapper;
 
 beforeEach(() => {
 	wrapper = shallow(<SettingsScreen {...tempProps} />);
-
-	// wrapper = shallow(<SettingsScreen {...tempProps} />, {
-	// 	context: { store: mockStore(initialState) }
-	// });
 });
 
 describe('<SettingsScreen />', () => {
@@ -75,12 +67,29 @@ describe('<SettingsScreen />', () => {
 		expect(wrapper.find(Picker).length).toBe(4);
 	});
 
+	it('sets timerDuration to 4 when the timer type is tabata or reverse tabata', () => {
+		const picker = wrapper.find(Picker).at(0);
+
+		picker.simulate('valueChange', 'Tabata');
+
+		expect(wrapper.state('timerType')).toBe('Tabata');
+		expect(wrapper.state('timerDuration')).toBe(4);
+	});
+
 	it('calls Switch onvalueChange', () => {
 		const toggle = wrapper.find(Switch).at(0);
 
 		toggle.simulate('valueChange', true);
 
 		expect(wrapper.state('countdown')).toBe(true);
+	});
+
+	it('changes the duration of the timer', () => {
+		const picker = wrapper.find(Picker).at(1);
+
+		picker.simulate('valueChange', 5);
+
+		expect(wrapper.state('timerDuration')).toBe(5);
 	});
 
 	it('Successfully changes the countdownDuration', () => {

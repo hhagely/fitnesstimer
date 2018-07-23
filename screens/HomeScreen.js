@@ -61,8 +61,6 @@ export class HomeScreen extends React.Component {
 		// 	};
 		// }
 
-		console.log(`timer: ${JSON.stringify(timer)}`);
-
 		// TODO: should not be passing identical props into 2 separate components like below. Separate it out.
 		switch (timer.timerType) {
 			case 'AMRAP':

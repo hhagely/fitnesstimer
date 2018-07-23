@@ -9,6 +9,14 @@ exports[`<Amrap /> renders the component 1`] = `
   <TimeElapsed
     isRunning={false}
     timeElapsed={0}
+    timerSettings={
+      Object {
+        "countdown": true,
+        "countdownDuration": 10,
+        "timerDuration": 10,
+        "timerType": "AMRAP",
+      }
+    }
   />
   <View
     style={
