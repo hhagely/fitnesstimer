@@ -5,6 +5,7 @@ import { shallow, configure } from 'enzyme';
 import toJson from 'enzyme-to-json';
 
 import Amrap from '../Amrap';
+import CountdownModal from '../../CountdownModal';
 
 configure({ adapter: new Adapter() });
 
@@ -22,6 +23,8 @@ const tempProps = {
 
 beforeEach(() => {
 	wrapper = shallow(<Amrap {...tempProps} />);
+
+	jest.useFakeTimers();
 });
 
 describe('<Amrap />', () => {
@@ -34,8 +37,48 @@ describe('<Amrap />', () => {
 
 		startButton.simulate('press');
 
-		expect(tempProps.instance().startCountdown).toHaveBeenCalled();
+		wrapper.update();
 
-		// expect(tempProps.startCountdown).toHaveBeenCalled();
+		expect(wrapper.state('showModal')).toBe(true);
+		expect(wrapper.state('isRunning')).toBe(true);
+
+		jest.advanceTimersByTime(11000);
+
+		expect(wrapper.state('showModal')).toBe(false);
+		expect(clearInterval).toHaveBeenCalled();
 	});
+
+	it('calls the reset function when the button is pressed', () => {
+		const startButton = wrapper.find(Button).at(0);
+		const resetButton = wrapper.find(Button).at(1);
+
+		startButton.simulate('press');
+
+		wrapper.update();
+
+		jest.advanceTimersByTime(11000);
+
+		startButton.simulate('press');
+		wrapper.update();
+		resetButton.simulate('press');
+
+		expect(clearInterval).toHaveBeenCalled();
+		expect(wrapper.state()).toEqual(wrapper.instance().initialState);
+	});
+
+	// it('cancels the countdown', () => {
+	// 	const startButton = wrapper.find(Button).at(0);
+
+	// 	startButton.simulate('press');
+
+	// 	const modal = wrapper.find(CountdownModal).at(0);
+
+	// 	console.log(modal.prop('showModal'));
+
+	// 	wrapper.update();
+
+	// 	wrapper.find(Button).map((b) => {
+	// 		console.log('button title: ', b.prop('title'));
+	// 	});
+	// });
 });

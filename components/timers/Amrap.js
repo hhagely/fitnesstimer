@@ -9,17 +9,13 @@ import CountdownModal from '../CountdownModal';
 class AmrapTimer extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			showModal: false,
-			isRunning: false,
-			timeElapsed: 0
-		};
-
-		this.initialState = {
+		this.state = this.initialState = {
 			timerSettings: this.props.timerSettings,
 			showModal: false,
 			isRunning: false,
-			timeElapsed: 0
+			timeElapsed: 0,
+			countdownTimeLeft: 0,
+			startTime: 0
 		};
 
 		['update', 'reset', 'toggle', 'cancelCountdown'].forEach((method) => {

@@ -1,10 +1,14 @@
 import 'react-native';
 import React from 'react';
 import { MonoText } from '../StyledText';
-import renderer from 'react-test-renderer';
+import Adapter from 'enzyme-adapter-react-16';
+import { shallow, configure } from 'enzyme';
+import toJson from 'enzyme-to-json';
+
+configure({ adapter: new Adapter() });
 
 it('renders correctly', () => {
-  const tree = renderer.create(<MonoText>Snapshot test!</MonoText>).toJSON();
+	const tree = shallow(<MonoText>Snapshot test!</MonoText>);
 
-  expect(tree).toMatchSnapshot();
+	expect(toJson(tree)).toMatchSnapshot();
 });

@@ -1,19 +1,9 @@
 import React from 'react';
-import {
-	Image,
-	Platform,
-	ScrollView,
-	StyleSheet,
-	Text,
-	View
-} from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { WebBrowser } from 'expo';
-import { connect } from 'react-redux';
-
-import { MonoText } from '../components/StyledText';
 import AmrapTimer from '../components/timers/Amrap';
 
-export class HomeScreen extends React.Component {
+export default class HomeScreen extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -22,12 +12,12 @@ export class HomeScreen extends React.Component {
 			timeElapsed: 0,
 			countdownTimeLeft: 0,
 			startTime: 0,
-			// timerSettings: {
-			timerType: 'AMRAP',
-			timerDuration: 10,
-			countdown: true,
-			countdownDuration: 10
-			// }
+			timerSettings: {
+				timerType: 'AMRAP',
+				timerDuration: 10,
+				countdown: true,
+				countdownDuration: 10
+			}
 		};
 	}
 
@@ -35,56 +25,38 @@ export class HomeScreen extends React.Component {
 		header: null
 	};
 
-	// componentWillUpdate() {
-	// 	const timerSettings = this.props.navigation.getParam('timerSettings', {
-	// 		timerType: 'AMRAP',
-	// 		timerDuration: 10,
-	// 		countdown: true,
-	// 		countdownDuration: 10
-	// 	});
-
-	// 	this.setState({ timerSettings });
-	// }
-
 	renderTimer() {
-		const { isRunning, timeElapsed } = this.state;
-		const { timer } = this.props;
-
-		if (timer === undefined) return;
-
-		// if (timer === undefined) {
-		// 	timer = {
-		// 		timerType: 'AMRAP',
-		// 		timerDuration: 10,
-		// 		countdown: true,
-		// 		countdownDuration: 10
-		// 	};
-		// }
+		const timerSettings = this.props.navigation.getParam(
+			'timerSettings',
+			this.initialState.timerSettings
+		);
 
 		// TODO: should not be passing identical props into 2 separate components like below. Separate it out.
-		switch (timer.timerType) {
+		switch (timerSettings.timerType) {
 			case 'AMRAP':
-				return <AmrapTimer timerSettings={timer} />;
+				return <AmrapTimer timerSettings={timerSettings} />;
 				break;
-			case 'Emom':
-				return (
-					<EmomTimer
-						render={(timer) => (
-							<TimeElapsed
-								timeElapsed={timeElapsed}
-								isRunning={isRunning}
-								timerSettings={timer}
-							/>
-						)}
-					/>
-				);
-				break;
+			// case 'Emom':
+			// 	return (
+			// 		<EmomTimer
+			// 			render={(timer) => (
+			// 				<TimeElapsed
+			// 					timeElapsed={timeElapsed}
+			// 					isRunning={isRunning}
+			// 					timerSettings={timerSettings}
+			// 				/>
+			// 			)}
+			// 		/>
+			// 	);
+			// 	break;
 			// case 'Tabata':
 			// 	return <TabataTimer duration={timerSettings.timerDuration} />;
 			// 	break;
 			// case 'ReverseTabata':
 			// 	return <ReverseTabataTimer duation={timerSettings.timerDuration} />;
 			// 	break;
+			default:
+				return <View />;
 		}
 	}
 
@@ -156,15 +128,3 @@ const styles = StyleSheet.create({
 		paddingTop: 30
 	}
 });
-
-const mapStateToProps = (state) => {
-	const { timer } = state;
-
-	return timer;
-};
-
-// export default connect(mapStateToProps)(HomeScreen);
-
-const HomeScreenContainer = connect(mapStateToProps)(HomeScreen);
-
-export default HomeScreenContainer;

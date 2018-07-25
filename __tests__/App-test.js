@@ -1,16 +1,20 @@
 import 'react-native';
 import React from 'react';
 import App from '../App';
-import renderer from 'react-test-renderer';
+import Adapter from 'enzyme-adapter-react-16';
+import { shallow, configure } from 'enzyme';
+import toJson from 'enzyme-to-json';
+
+configure({ adapter: new Adapter() });
 
 describe('<App />', () => {
 	it('renders the loading screen', async () => {
-		const tree = renderer.create(<App />).toJSON();
-		expect(tree).toMatchSnapshot();
+		const tree = shallow(<App />);
+		expect(toJson(tree)).toMatchSnapshot();
 	});
 
 	it('renders the root without loading screen', async () => {
-		const tree = renderer.create(<App skipLoadingScreen />).toJSON();
-		expect(tree).toMatchSnapshot();
+		const tree = shallow(<App skipLoadingScreen />);
+		expect(toJson(tree)).toMatchSnapshot();
 	});
 });

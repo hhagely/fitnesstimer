@@ -4,15 +4,10 @@ import {
 	Text,
 	View,
 	ScrollView,
-	Platform,
 	StyleSheet,
 	Switch,
-	Button,
-	AsyncStorage
+	Button
 } from 'react-native';
-import { connect } from 'react-redux';
-
-import { saveTimerSettings } from '../actions';
 
 export class SettingsScreen extends Component {
 	static navigationOptions = {
@@ -104,13 +99,9 @@ export class SettingsScreen extends Component {
 		if (timerSettings.timerType === 'EMOM') {
 			timerSettings.emomStyle = this.state.emomStyle;
 		}
-
-		this.props.saveTimerSettings(timerSettings);
-
-		this.props.navigation.navigate('Home');
-		// this.props.navigation.navigate('Home', {
-		// 	timerSettings
-		// });
+		this.props.navigation.navigate('Home', {
+			timerSettings
+		});
 	}
 
 	componentDidMount() {}
@@ -184,18 +175,4 @@ const styles = StyleSheet.create({
 	}
 });
 
-const mapStateToProps = (state) => {
-	const { timer } = state.timer;
-};
-
-const SettingsScreenContainer = connect(
-	null,
-	{ saveTimerSettings }
-)(SettingsScreen);
-
-export default SettingsScreenContainer;
-
-// export default connect(
-// 	null,
-// 	{ saveTimerSettings }
-// )(SettingsScreen);
+export default SettingsScreen;

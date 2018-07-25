@@ -34,14 +34,14 @@ describe('<SettingsScreen />', () => {
 		expect(toJson(wrapper)).toMatchSnapshot();
 	});
 
-	it('calls componentDidMount', () => {
-		jest.spyOn(SettingsScreen.prototype, 'componentDidMount');
+	// it('calls componentDidMount', () => {
+	// 	jest.spyOn(SettingsScreen.prototype, 'componentDidMount');
 
-		wrapper = shallow(<SettingsScreen {...tempProps} />);
-		expect(SettingsScreen.prototype.componentDidMount.mock.calls.length).toBe(
-			1
-		);
-	});
+	// 	wrapper = shallow(<SettingsScreen {...tempProps} />);
+	// 	expect(SettingsScreen.prototype.componentDidMount.mock.calls.length).toBe(
+	// 		1
+	// 	);
+	// });
 
 	it('Successfully changes the timerType', () => {
 		const picker = wrapper.find(Picker).at(0);
