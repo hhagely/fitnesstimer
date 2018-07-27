@@ -88,7 +88,8 @@ export class SettingsScreen extends Component {
 	}
 
 	setTimerAndNavigate() {
-		// save data in async storage and then navigate to the home screen.
+		console.log('timer duration: ', this.state.timerDuration);
+
 		let timerSettings = {
 			timerType: this.state.timerType,
 			timerDuration: this.state.timerDuration,

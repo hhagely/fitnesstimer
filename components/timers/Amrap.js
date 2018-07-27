@@ -35,16 +35,20 @@ class AmrapTimer extends Component {
 			() => {
 				const { timerSettings } = this.props;
 				const { isRunning, timeElapsed } = this.state;
-				if (timerSettings.countdown && isRunning && timeElapsed === 0) {
-					this.toggleModal();
-					this.startCountdown();
-
-					this.countdownTimerTimeout = setTimeout(() => {
-						this.startTimer();
+				if (isRunning && timeElapsed === 0) {
+					if (timerSettings.countdown) {
 						this.toggleModal();
-						clearInterval(this.countdownTimer);
-						// add 1 second to the countdown duration so the countdown actually goes to zero
-					}, timerSettings.countdownDuration * 1000 + 1000);
+						this.startCountdown();
+
+						this.countdownTimerTimeout = setTimeout(() => {
+							this.startTimer();
+							this.toggleModal();
+							clearInterval(this.countdownTimer);
+							// add 1 second to the countdown duration so the countdown actually goes to zero
+						}, timerSettings.countdownDuration * 1000 + 1000);
+					} else {
+						this.startTimer();
+					}
 				} else {
 					isRunning && timeElapsed > 0
 						? this.startTimer()
@@ -63,16 +67,40 @@ class AmrapTimer extends Component {
 		this.setState({ startTime: Date.now() });
 
 		this.timer = setInterval(this.update, 1000);
+
+		// this.endTimer = setTimeout(() => {
+		// 	this.toggle();
+		// }, this.props.timerSettings.timerDuration * 60 * 1000);
 	}
 
 	update() {
 		const newTime = Date.now();
 		const delta = newTime - this.state.startTime;
 
-		this.setState({
-			startTime: newTime,
-			timeElapsed: this.state.timeElapsed + delta
-		});
+		let durationInMs = this.props.timerSettings.timerDuration * 60 * 1000; // 60k ms in 1 minute
+
+		let tempElapsed = this.state.timeElapsed + delta;
+
+		console.log('duration: ', this.props.timerSettings.timerDuration);
+		console.log(`duration in ms: ${durationInMs}`);
+		console.log(`temp elapsed: ${tempElapsed}`);
+
+		this.setState(
+			{
+				startTime: newTime,
+				timeElapsed: tempElapsed,
+				timeLeft: durationInMs - tempElapsed
+			},
+			() => {
+				if (-1000 <= this.state.timeLeft && this.state.timeLeft <= 0) {
+					clearInterval(this.timer);
+					this.toggle();
+					this.setState(this.initialState);
+				}
+				console.log(`timeelapsed: ${this.state.timeElapsed}`);
+				console.log(`time left: ${this.state.timeLeft}`);
+			}
+		);
 	}
 
 	startCountdown() {
@@ -118,6 +146,8 @@ class AmrapTimer extends Component {
 		const { timerSettings } = this.props;
 		const { timeElapsed, isRunning } = this.state;
 
+		console.log(JSON.stringify(timerSettings));
+
 		return (
 			<View>
 				<CountdownModal
@@ -162,5 +192,15 @@ const styles = StyleSheet.create({
 		width: 125
 	}
 });
+
+AmrapTimer.propTypes = {
+	timerSettings: PropTypes.shape({
+		timerType: PropTypes.string,
+		timerDuration: PropTypes.number,
+		countdown: PropTypes.bool,
+		countdownDuration: PropTypes.number,
+		emomStyle: PropTypes.number
+	})
+};
 
 export default AmrapTimer;

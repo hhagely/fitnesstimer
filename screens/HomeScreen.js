@@ -26,6 +26,7 @@ export default class HomeScreen extends React.Component {
 	};
 
 	renderTimer() {
+		console.log('calling render timer');
 		const timerSettings = this.props.navigation.getParam(
 			'timerSettings',
 			this.initialState.timerSettings
