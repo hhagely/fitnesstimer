@@ -26,11 +26,13 @@ export default class HomeScreen extends React.Component {
 	};
 
 	renderTimer() {
-		console.log('calling render timer');
-		const timerSettings = this.props.navigation.getParam(
+		let timerSettings = this.props.navigation.getParam(
 			'timerSettings',
 			this.initialState.timerSettings
 		);
+
+		//? to make jest happy for some reason it's not getting the default object.
+		if (!timerSettings) timerSettings = this.initialState.timerSettings;
 
 		// TODO: should not be passing identical props into 2 separate components like below. Separate it out.
 		switch (timerSettings.timerType) {

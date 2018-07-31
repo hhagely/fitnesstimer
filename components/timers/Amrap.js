@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Button, StyleSheet } from 'react-native';
+import { View, Button, StyleSheet, ToastAndroid } from 'react-native';
 import { Audio } from 'expo';
 import PropTypes from 'prop-types';
 
@@ -33,6 +33,7 @@ class AmrapTimer extends Component {
 				isRunning: !this.state.isRunning
 			},
 			() => {
+				console.log('props: ', this.props);
 				const { timerSettings } = this.props;
 				const { isRunning, timeElapsed } = this.state;
 				if (isRunning && timeElapsed === 0) {
@@ -67,10 +68,16 @@ class AmrapTimer extends Component {
 		this.setState({ startTime: Date.now() });
 
 		this.timer = setInterval(this.update, 1000);
+	}
 
-		// this.endTimer = setTimeout(() => {
-		// 	this.toggle();
-		// }, this.props.timerSettings.timerDuration * 60 * 1000);
+	endTimer() {
+		clearInterval(this.timer);
+		this.toggle();
+		this.setState(this.initialState);
+		Audio.Sound.create(require('../../assets/sounds/Popcorn.mp3'), {
+			shouldPlay: true
+		});
+		ToastAndroid.show('Your workout is  finished!', ToastAndroid.SHORT);
 	}
 
 	update() {
@@ -81,10 +88,6 @@ class AmrapTimer extends Component {
 
 		let tempElapsed = this.state.timeElapsed + delta;
 
-		console.log('duration: ', this.props.timerSettings.timerDuration);
-		console.log(`duration in ms: ${durationInMs}`);
-		console.log(`temp elapsed: ${tempElapsed}`);
-
 		this.setState(
 			{
 				startTime: newTime,
@@ -93,12 +96,8 @@ class AmrapTimer extends Component {
 			},
 			() => {
 				if (-1000 <= this.state.timeLeft && this.state.timeLeft <= 0) {
-					clearInterval(this.timer);
-					this.toggle();
-					this.setState(this.initialState);
+					this.endTimer();
 				}
-				console.log(`timeelapsed: ${this.state.timeElapsed}`);
-				console.log(`time left: ${this.state.timeLeft}`);
 			}
 		);
 	}
@@ -145,8 +144,6 @@ class AmrapTimer extends Component {
 	render() {
 		const { timerSettings } = this.props;
 		const { timeElapsed, isRunning } = this.state;
-
-		console.log(JSON.stringify(timerSettings));
 
 		return (
 			<View>

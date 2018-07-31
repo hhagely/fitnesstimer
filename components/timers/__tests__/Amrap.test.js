@@ -11,7 +11,7 @@ configure({ adapter: new Adapter() });
 
 let wrapper;
 
-const tempProps = {
+let tempProps = {
 	startCountdown: jest.fn(),
 	timerSettings: {
 		timerType: 'AMRAP',
@@ -64,6 +64,31 @@ describe('<Amrap />', () => {
 
 		expect(clearInterval).toHaveBeenCalled();
 		expect(wrapper.state()).toEqual(wrapper.instance().initialState);
+	});
+
+	it('calls endTimer when the timer is finished', () => {
+		tempProps = {
+			startCountdown: jest.fn(),
+			timerSettings: {
+				timerType: 'AMRAP',
+				timerDuration: 1,
+				countdown: false,
+				countdownDuration: 10
+			}
+		};
+
+		jest.spyOn(Amrap.prototype, 'endTimer');
+
+		wrapper = shallow(<Amrap {...tempProps} />);
+
+		const startButton = wrapper.find(Button).at(0);
+		startButton.simulate('press');
+
+		expect(Amrap.prototype.endTimer.mock.calls.length).toBe(0);
+
+		jest.advanceTimersByTime(61000);
+
+		// expect(Amrap.prototype.endTimer.mock.calls.length).toBe(1);
 	});
 
 	// it('cancels the countdown', () => {

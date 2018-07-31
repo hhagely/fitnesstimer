@@ -88,8 +88,6 @@ export class SettingsScreen extends Component {
 	}
 
 	setTimerAndNavigate() {
-		console.log('timer duration: ', this.state.timerDuration);
-
 		let timerSettings = {
 			timerType: this.state.timerType,
 			timerDuration: this.state.timerDuration,

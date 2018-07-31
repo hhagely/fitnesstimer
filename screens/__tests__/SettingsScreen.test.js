@@ -34,15 +34,6 @@ describe('<SettingsScreen />', () => {
 		expect(toJson(wrapper)).toMatchSnapshot();
 	});
 
-	// it('calls componentDidMount', () => {
-	// 	jest.spyOn(SettingsScreen.prototype, 'componentDidMount');
-
-	// 	wrapper = shallow(<SettingsScreen {...tempProps} />);
-	// 	expect(SettingsScreen.prototype.componentDidMount.mock.calls.length).toBe(
-	// 		1
-	// 	);
-	// });
-
 	it('Successfully changes the timerType', () => {
 		const picker = wrapper.find(Picker).at(0);
 
@@ -127,9 +118,14 @@ describe('<SettingsScreen />', () => {
 	});
 
 	it('calls setTimerAndNavigate when button is clicked', () => {
+		jest.spyOn(SettingsScreen.prototype, 'setTimerAndNavigate');
+
+		wrapper = shallow(<SettingsScreen {...tempProps} />);
 		const button = wrapper.find(Button).at(0);
 		button.simulate('press');
 
-		expect(tempProps.saveTimerSettings).toHaveBeenCalled();
+		expect(SettingsScreen.prototype.setTimerAndNavigate.mock.calls.length).toBe(
+			1
+		);
 	});
 });
