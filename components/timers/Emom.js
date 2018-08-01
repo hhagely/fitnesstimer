@@ -1,26 +1,27 @@
 import React, { Component } from 'react';
-import { View, Button, StyleSheet } from 'react-native';
+import { View, Button, StyleSheet, ToastAndroid } from 'react-native';
 import { Audio } from 'expo';
 import PropTypes from 'prop-types';
 
 import TimeElapsed from '../TimeElapsed';
 import CountdownModal from '../CountdownModal';
 
+/**
+ * TODO: Make a 'Timer' component that all the different timers use.
+ * TODO: This component should accept an update function that is unique to that timer type.
+ * TODO: This method decides what to do at each update interval of the timer.
+ */
 class EmomTimer extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {
-			showModal: false,
-			isRunning: false,
-			timeElapsed: 0
-		};
-
-		this.initialState = {
+		this.state = this.initialState = {
 			timerSettings: this.props.timerSettings,
 			showModal: false,
 			isRunning: false,
-			timeElapsed: 0
+			timeElapsed: 0,
+			countdownTimeLeft: 0,
+			startTime: 0
 		};
 
 		['update', 'reset', 'toggle', 'cancelCountdown'].forEach((method) => {
@@ -40,16 +41,20 @@ class EmomTimer extends Component {
 			() => {
 				const { timerSettings } = this.props;
 				const { isRunning, timeElapsed } = this.state;
-				if (timerSettings.countdown && isRunning && timeElapsed === 0) {
-					this.toggleModal();
-					this.startCountdown();
-
-					this.countdownTimerTimeout = setTimeout(() => {
-						this.startTimer();
+				if (isRunning && timeElapsed === 0) {
+					if (timerSettings.countdown) {
 						this.toggleModal();
-						clearInterval(this.countdownTimer);
-						// add 1 second to the countdown duration so the countdown actually goes to zero
-					}, timerSettings.countdownDuration * 1000 + 1000);
+						this.startCountdown();
+
+						this.countdownTimerTimeout = setTimeout(() => {
+							this.startTimer();
+							this.toggleModal();
+							clearInterval(this.countdownTimer);
+							// add 1 second to the countdown duration so the countdown actually goes to zero
+						}, timerSettings.countdownDuration * 1000 + 1000);
+					} else {
+						this.startTimer();
+					}
 				} else {
 					isRunning && timeElapsed > 0
 						? this.startTimer()
@@ -70,16 +75,43 @@ class EmomTimer extends Component {
 		this.timer = setInterval(this.update, 1000);
 	}
 
+	playPopcornSound() {
+		Audio.Sound.create(require('../../assets/sounds/Popcorn.mp3'), {
+			shouldPlay: true
+		});
+	}
+
+	endTimer() {
+		clearInterval(this.timer);
+		this.toggle();
+		this.setState(this.initialState);
+		this.playPopcornSound();
+		ToastAndroid.show('Your workout is  finished!', ToastAndroid.SHORT);
+	}
+
 	update() {
 		const newTime = Date.now();
 		const delta = newTime - this.state.startTime;
 
-		console.log(`delta: ${delta}`);
+		let durationInMs = this.props.timerSettings.timerDuration * 60 * 1000; // 60k ms in 1 minute
 
-		this.setState({
-			startTime: newTime,
-			timeElapsed: this.state.timeElapsed + delta
-		});
+		let tempElapsed = this.state.timeElapsed + delta;
+
+		this.setState(
+			{
+				startTime: newTime,
+				timeElapsed: tempElapsed,
+				timeLeft: durationInMs - tempElapsed
+			},
+			() => {
+				// on the minute
+				if (-1000 <= this.state.timeLeft && this.state.timeLeft <= 0) {
+					this.endTimer();
+				} else if (this.state.timeElapsed % 60000 < 1000) {
+					this.playPopcornSound();
+				}
+			}
+		);
 	}
 
 	startCountdown() {
@@ -161,7 +193,6 @@ class EmomTimer extends Component {
 						/>
 					</View>
 				</View>
-				<Text>Emom Timer</Text>
 			</View>
 		);
 	}
@@ -172,5 +203,15 @@ const styles = StyleSheet.create({
 		width: 125
 	}
 });
+
+EmomTimer.propTypes = {
+	timerSettings: PropTypes.shape({
+		timerType: PropTypes.string,
+		timerDuration: PropTypes.number,
+		countdown: PropTypes.bool,
+		countdownDuration: PropTypes.number,
+		emomStyle: PropTypes.number
+	})
+};
 
 export default EmomTimer;

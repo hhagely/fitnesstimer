@@ -2,6 +2,9 @@ import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { WebBrowser } from 'expo';
 import AmrapTimer from '../components/timers/Amrap';
+import EmomTimer from '../components/timers/Emom';
+import TabataTimer from '../components/timers/Tabata';
+// import ReverseTabataTimer from '../components/timers/ReverseTabata';
 
 export default class HomeScreen extends React.Component {
 	constructor(props) {
@@ -39,22 +42,24 @@ export default class HomeScreen extends React.Component {
 			case 'AMRAP':
 				return <AmrapTimer timerSettings={timerSettings} />;
 				break;
-			// case 'Emom':
-			// 	return (
-			// 		<EmomTimer
-			// 			render={(timer) => (
-			// 				<TimeElapsed
-			// 					timeElapsed={timeElapsed}
-			// 					isRunning={isRunning}
-			// 					timerSettings={timerSettings}
-			// 				/>
-			// 			)}
-			// 		/>
-			// 	);
-			// 	break;
-			// case 'Tabata':
-			// 	return <TabataTimer duration={timerSettings.timerDuration} />;
-			// 	break;
+			case 'EMOM':
+				console.log('rendering emom timer');
+				return <EmomTimer timerSettings={timerSettings} />;
+				// 	return (
+				// 		<EmomTimer
+				// 			render={(timer) => (
+				// 				<TimeElapsed
+				// 					timeElapsed={timeElapsed}
+				// 					isRunning={isRunning}
+				// 					timerSettings={timerSettings}
+				// 				/>
+				// 			)}
+				// 		/>
+				// 	);
+				break;
+			case 'Tabata':
+				return <TabataTimer timerSettings={timerSettings} />;
+				break;
 			// case 'ReverseTabata':
 			// 	return <ReverseTabataTimer duation={timerSettings.timerDuration} />;
 			// 	break;

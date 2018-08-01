@@ -6,6 +6,11 @@ import PropTypes from 'prop-types';
 import TimeElapsed from '../TimeElapsed';
 import CountdownModal from '../CountdownModal';
 
+/**
+ * TODO: Make a 'Timer' component that all the different timers use.
+ * TODO: This component should accept an update function that is unique to that timer type.
+ * TODO: This method decides what to do at each update interval of the timer.
+ */
 class AmrapTimer extends Component {
 	constructor(props) {
 		super(props);
@@ -33,7 +38,6 @@ class AmrapTimer extends Component {
 				isRunning: !this.state.isRunning
 			},
 			() => {
-				console.log('props: ', this.props);
 				const { timerSettings } = this.props;
 				const { isRunning, timeElapsed } = this.state;
 				if (isRunning && timeElapsed === 0) {
@@ -70,13 +74,17 @@ class AmrapTimer extends Component {
 		this.timer = setInterval(this.update, 1000);
 	}
 
+	playPopcornSound() {
+		Audio.Sound.create(require('../../assets/sounds/Popcorn.mp3'), {
+			shouldPlay: true
+		});
+	}
+
 	endTimer() {
 		clearInterval(this.timer);
 		this.toggle();
 		this.setState(this.initialState);
-		Audio.Sound.create(require('../../assets/sounds/Popcorn.mp3'), {
-			shouldPlay: true
-		});
+		this.playPopcornSound();
 		ToastAndroid.show('Your workout is  finished!', ToastAndroid.SHORT);
 	}
 
@@ -143,13 +151,13 @@ class AmrapTimer extends Component {
 
 	render() {
 		const { timerSettings } = this.props;
-		const { timeElapsed, isRunning } = this.state;
+		const { timeElapsed, isRunning, showModal, countdownTimeLeft } = this.state;
 
 		return (
 			<View>
 				<CountdownModal
-					showModal={this.state.showModal}
-					countdownTimeLeft={this.state.countdownTimeLeft}
+					showModal={showModal}
+					countdownTimeLeft={countdownTimeLeft}
 					cancelCountdown={this.cancelCountdown}
 				/>
 				<TimeElapsed
