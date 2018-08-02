@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Button, StyleSheet } from 'react-native';
+import { View, Button, StyleSheet, Text } from 'react-native';
 import { Audio } from 'expo';
 import PropTypes from 'prop-types';
 
@@ -17,10 +17,14 @@ class ReverseTabataTimer extends Component {
 
 		this.state = this.initialState = {
 			timerSettings: this.props.timerSettings,
+			intervalCount: 0,
 			showModal: false,
 			isRunning: false,
 			timeElapsed: 0,
+			intervalElapsed: 0,
 			countdownTimeLeft: 0,
+			work: false,
+			rest: false,
 			startTime: 0
 		};
 
@@ -41,16 +45,20 @@ class ReverseTabataTimer extends Component {
 			() => {
 				const { timerSettings } = this.props;
 				const { isRunning, timeElapsed } = this.state;
-				if (timerSettings.countdown && isRunning && timeElapsed === 0) {
-					this.toggleModal();
-					this.startCountdown();
-
-					this.countdownTimerTimeout = setTimeout(() => {
-						this.startTimer();
+				if (isRunning && timeElapsed === 0) {
+					if (timerSettings.countdown) {
 						this.toggleModal();
-						clearInterval(this.countdownTimer);
-						// add 1 second to the countdown duration so the countdown actually goes to zero
-					}, timerSettings.countdownDuration * 1000 + 1000);
+						this.startCountdown();
+
+						this.countdownTimerTimeout = setTimeout(() => {
+							this.startTimer();
+							this.toggleModal();
+							clearInterval(this.countdownTimer);
+							// add 1 second to the countdown duration so the countdown actually goes to zero
+						}, timerSettings.countdownDuration * 1000 + 1000);
+					} else {
+						this.startTimer();
+					}
 				} else {
 					isRunning && timeElapsed > 0
 						? this.startTimer()
@@ -66,9 +74,19 @@ class ReverseTabataTimer extends Component {
 	}
 
 	startTimer() {
-		this.setState({ startTime: Date.now() });
+		this.setState({
+			startTime: Date.now(),
+			work: true,
+			intervalCount: this.state.intervalCount + 1
+		});
 
 		this.timer = setInterval(this.update, 1000);
+	}
+
+	playPing() {
+		Audio.Sound.create(require('../../assets/sounds/Ping.mp3'), {
+			shouldPlay: true
+		});
 	}
 
 	playPopcornSound() {
@@ -92,19 +110,50 @@ class ReverseTabataTimer extends Component {
 		let durationInMs = this.props.timerSettings.timerDuration * 60 * 1000; // 60k ms in 1 minute
 
 		let tempElapsed = this.state.timeElapsed + delta;
+		let tempIntervalElapsed = this.state.intervalElapsed + delta;
+		let timeLeft = durationInMs - tempElapsed;
 
-		this.setState(
-			{
+		if (this.state.rest && tempIntervalElapsed % 20000 < 1000) {
+			this.playPing();
+			this.setState({
 				startTime: newTime,
+				work: true,
+				rest: false,
 				timeElapsed: tempElapsed,
-				timeLeft: durationInMs - tempElapsed
-			},
-			() => {
-				if (-1000 <= this.state.timeLeft && this.state.timeLeft <= 0) {
-					this.endTimer();
+				intervalCount: this.state.intervalCount + 1,
+				intervalElapsed: 0,
+				timeLeft
+			});
+		} else if (this.state.work && tempIntervalElapsed % 10000 < 1000) {
+			this.playPing();
+			this.setState({
+				work: false,
+				rest: true,
+				timeElapsed: tempElapsed,
+				intervalElapsed: 0,
+				timeLeft,
+				startTime: newTime
+			});
+		} else {
+			this.setState(
+				{
+					startTime: newTime,
+					timeElapsed: tempElapsed,
+					intervalElapsed: tempIntervalElapsed,
+					timeLeft
+				},
+				() => {
+					if (
+						-1000 <= this.state.timeLeft &&
+						this.state.timeLeft <= 0 &&
+						this.state.intervalCount === 8 &&
+						this.state.rest
+					) {
+						this.endTimer();
+					}
 				}
-			}
-		);
+			);
+		}
 	}
 
 	startCountdown() {
@@ -121,13 +170,8 @@ class ReverseTabataTimer extends Component {
 							this.state.countdownTimeLeft <= 3 &&
 							this.state.countdownTimeLeft > 0
 						) {
-							Audio.Sound.create(require('../../assets/sounds/Ping.mp3'), {
-								shouldPlay: true
-							});
 						} else if (this.state.countdownTimeLeft === 0) {
-							Audio.Sound.create(require('../../assets/sounds/Popcorn.mp3'), {
-								shouldPlay: true
-							});
+							this.playPopcornSound();
 						}
 					}
 				),
@@ -150,7 +194,13 @@ class ReverseTabataTimer extends Component {
 
 	render() {
 		const { timerSettings } = this.props;
-		const { timeElapsed, isRunning, showModal, countdownTimeLeft } = this.state;
+		const {
+			timeElapsed,
+			isRunning,
+			showModal,
+			countdownTimeLeft,
+			intervalElapsed
+		} = this.state;
 
 		return (
 			<View>
@@ -160,10 +210,16 @@ class ReverseTabataTimer extends Component {
 					cancelCountdown={this.cancelCountdown}
 				/>
 				<TimeElapsed
-					timeElapsed={timeElapsed}
+					timeElapsed={intervalElapsed}
 					isRunning={isRunning}
 					timerSettings={timerSettings}
 				/>
+				<View style={styles.intervalCountContainer}>
+					<Text style={{ fontSize: 32 }}>
+						Interval: {this.state.intervalCount}
+					</Text>
+				</View>
+
 				<View
 					style={{
 						flexDirection: 'row',
@@ -194,6 +250,10 @@ class ReverseTabataTimer extends Component {
 const styles = StyleSheet.create({
 	buttonContainer: {
 		width: 125
+	},
+	intervalCountContainer: {
+		padding: 20,
+		alignItems: 'center'
 	}
 });
 

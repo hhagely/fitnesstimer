@@ -38,7 +38,6 @@ class TabataTimer extends Component {
 	}
 
 	toggle() {
-		console.log('toggle called');
 		this.setState(
 			{
 				isRunning: !this.state.isRunning
@@ -114,10 +113,7 @@ class TabataTimer extends Component {
 		let tempIntervalElapsed = this.state.intervalElapsed + delta;
 		let timeLeft = durationInMs - tempElapsed;
 
-		console.log('timeelapsed: ', tempElapsed);
-
 		if (this.state.work && tempIntervalElapsed % 20000 < 1000) {
-			console.log('worktest');
 			this.playPing();
 			this.setState({
 				startTime: newTime,
@@ -128,7 +124,6 @@ class TabataTimer extends Component {
 				timeLeft
 			});
 		} else if (this.state.rest && tempIntervalElapsed % 10000 < 1000) {
-			console.log('rest test');
 			this.playPing();
 			this.setState({
 				work: true,
@@ -160,31 +155,6 @@ class TabataTimer extends Component {
 			);
 		}
 	}
-
-	// update() {
-	// 	const newTime = Date.now();
-	// 	const delta = newTime - this.state.startTime;
-
-	// 	let durationInMs = this.props.timerSettings.timerDuration * 60 * 1000; // 60k ms in 1 minute
-
-	// 	let tempElapsed = this.state.timeElapsed + delta;
-
-	// 	this.setState(
-	// 		{
-	// 			startTime: newTime,
-	// 			timeElapsed: tempElapsed,
-	// 			timeLeft: durationInMs - tempElapsed
-	// 		},
-	// 		() => {
-	// 			// on the minute
-	// 			if (-1000 <= this.state.timeLeft && this.state.timeLeft <= 0) {
-	// 				this.endTimer();
-	// 			} else if (this.state.timeElapsed % 60000 < 1000) {
-	// 				this.playPopcornSound();
-	// 			}
-	// 		}
-	// 	);
-	// }
 
 	startCountdown() {
 		const { countdownDuration } = this.props.timerSettings;
@@ -244,7 +214,11 @@ class TabataTimer extends Component {
 					isRunning={isRunning}
 					timerSettings={timerSettings}
 				/>
-				<Text>{this.state.intervalCount}</Text>
+				<View style={styles.intervalCountContainer}>
+					<Text style={{ fontSize: 32 }}>
+						Interval: {this.state.intervalCount}
+					</Text>
+				</View>
 				<View
 					style={{
 						flexDirection: 'row',
@@ -275,6 +249,10 @@ class TabataTimer extends Component {
 const styles = StyleSheet.create({
 	buttonContainer: {
 		width: 125
+	},
+	intervalCountContainer: {
+		padding: 20,
+		alignItems: 'center'
 	}
 });
 
